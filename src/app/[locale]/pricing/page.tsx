@@ -53,7 +53,7 @@ export default async function PricingPage({
               </CardDescription>
               <div className="mt-6">
                 <Link
-                  href="/services"
+                  href="/en-ZA/services"
                   className="inline-flex items-center gap-2 text-sm font-semibold text-[color:var(--accent-strong)] transition-colors hover:text-[color:var(--fg)]"
                 >
                   View services
@@ -105,7 +105,7 @@ export default async function PricingPage({
         />
         <div className="mt-10 flex justify-center">
           <Link
-            href="/contact"
+            href="/en-ZA/contact"
             className="inline-flex h-11 items-center rounded-full brand-gradient px-6 text-sm font-semibold text-[#05070A] shadow-[0_8px_30px_-12px_rgba(62,214,194,0.55)] transition-all hover:-translate-y-0.5 hover:brightness-110"
           >
             {t("cta.button")}

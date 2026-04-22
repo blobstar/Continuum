@@ -70,7 +70,7 @@ export function Nav() {
           <LocaleSwitcher />
           <ThemeToggle />
           <Link
-            href="/contact"
+            href="/en-ZA/contact"
             className="hidden h-10 items-center rounded-full brand-gradient px-5 text-sm font-semibold text-[#05070A] shadow-[0_8px_30px_-12px_rgba(62,214,194,0.55)] transition-all hover:-translate-y-0.5 hover:brightness-110 md:inline-flex"
           >
             {t("cta")}
@@ -126,7 +126,7 @@ export function Nav() {
               </Link>
             ))}
             <Link
-              href="/contact"
+              href="/en-ZA/contact"
               className="mt-2 inline-flex h-11 items-center justify-center rounded-full brand-gradient px-5 text-sm font-semibold text-[#05070A]"
             >
               {t("cta")}

@@ -25,7 +25,7 @@ export function CtaBand() {
             </p>
           </div>
           <Link
-            href="/contact"
+            href="/en-ZA/contact"
             className="inline-flex h-12 shrink-0 items-center justify-center rounded-full brand-gradient px-7 text-base font-semibold text-[#05070A] shadow-[0_10px_40px_-12px_rgba(62,214,194,0.55)] transition-all hover:-translate-y-0.5 hover:brightness-110"
           >
             {t("cta")}

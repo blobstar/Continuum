@@ -15,7 +15,7 @@ export function ServicesTeaser() {
           subtitle={t("subtitle")}
         />
         <Link
-          href="/services"
+          href="/en-ZA/services"
           className="inline-flex items-center gap-2 text-sm font-semibold text-[color:var(--accent-strong)] transition-colors hover:text-[color:var(--fg)]"
         >
           {t("cta")}

@@ -28,6 +28,7 @@
   --fg: #05070A;
   --fg-muted: #4A5560;
   --border: rgba(5, 7, 10, 0.08);
+  --logo-shadow: rgba(5, 7, 10, 0.92);
 }
 
 .dark {
@@ -36,6 +37,7 @@
   --fg: #EAEFF2;
   --fg-muted: #8A95A3;
   --border: rgba(234, 239, 242, 0.08);
+  --logo-shadow: rgba(0, 0, 0, 0.42);
 }
 
 @layer base {
