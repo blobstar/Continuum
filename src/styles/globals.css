@@ -37,7 +37,8 @@
   --fg: #EAEFF2;
   --fg-muted: #8A95A3;
   --border: rgba(234, 239, 242, 0.08);
-  --logo-shadow: rgba(0, 0, 0, 0.42);
+  /* Keep dark-mode logo detail identical to the original SVG (#000). */
+  --logo-shadow: #000;
 }
 
 @layer base {
