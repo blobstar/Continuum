@@ -28,7 +28,8 @@
   --fg: #05070A;
   --fg-muted: #4A5560;
   --border: rgba(5, 7, 10, 0.08);
-  --logo-shadow: rgba(5, 7, 10, 0.92);
+  /* In light mode the mark's inner detail should read as a cut-out (match page bg). */
+  --logo-shadow: var(--bg);
 }
 
 .dark {
