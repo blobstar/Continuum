@@ -1,0 +1,221 @@
+{
+  "brand": {
+    "name": "CONTINUUM",
+    "tagline": "AI Training & Advisory"
+  },
+  "nav": {
+    "home": "Home",
+    "services": "Services",
+    "about": "About",
+    "insights": "Insights",
+    "contact": "Contact",
+    "cta": "Book a session",
+    "toggleTheme": "Toggle theme",
+    "menu": "Menu",
+    "close": "Close"
+  },
+  "home": {
+    "hero": {
+      "eyebrow": "AI Training & Advisory",
+      "title": "Empowering organisations to lead with AI.",
+      "subtitle": "Practical training. Strategic advisory. Real business impact.",
+      "ctaPrimary": "Explore services",
+      "ctaSecondary": "Get in touch"
+    },
+    "valueProps": {
+      "title": "Built for South African business. Ready for the world.",
+      "subtitle": "Non-technical, outcome-driven AI enablement for teams that need to act, not theorise.",
+      "items": [
+        {
+          "title": "Practical, non-technical",
+          "body": "Workshops your leaders and operators actually use — no jargon, no academic detours."
+        },
+        {
+          "title": "Real business use cases",
+          "body": "Every session is grounded in scenarios from your sector, with artefacts teams take back to their desks."
+        },
+        {
+          "title": "SA-regulatory aligned",
+          "body": "POPIA, governance and risk considerations baked into every programme from day one."
+        },
+        {
+          "title": "Immediate application",
+          "body": "Tools, prompts and frameworks that deliver value inside the week, not inside the next quarter."
+        }
+      ]
+    },
+    "sectors": {
+      "title": "Trusted approach for regulated industries",
+      "items": [
+        "Banking & Financial Services",
+        "Insurance",
+        "Mid-sized Corporates",
+        "Professional Services",
+        "SMEs adopting AI"
+      ]
+    },
+    "servicesTeaser": {
+      "title": "Our services",
+      "subtitle": "From 90-minute executive briefings to multi-week corporate programmes.",
+      "cta": "See all services"
+    },
+    "ctaBand": {
+      "title": "Ready to move from AI curiosity to AI capability?",
+      "subtitle": "Tell us about your team. We'll recommend the right starting point.",
+      "cta": "Start the conversation"
+    }
+  },
+  "services": {
+    "pageTitle": "Services",
+    "pageSubtitle": "Four core offerings, each designed to meet your organisation exactly where it is on the AI adoption curve.",
+    "priceLabel": "Investment",
+    "durationLabel": "Duration",
+    "formatLabel": "Format",
+    "audienceLabel": "Audience",
+    "focusLabel": "Focus",
+    "includesLabel": "Includes",
+    "ctaLabel": "Enquire about this programme",
+    "items": {
+      "awareness": {
+        "name": "AI Awareness Sessions",
+        "summary": "Executive and team briefings that demystify AI and translate the hype into decisions.",
+        "price": "R8,000 – R20,000 per session",
+        "duration": "60 – 90 minutes",
+        "format": "Virtual or in-person",
+        "outcomes": [
+          "Shared vocabulary across leadership",
+          "Clear view of where AI applies in your business",
+          "Confidence to sponsor AI initiatives"
+        ]
+      },
+      "business": {
+        "name": "AI for Business Workshops",
+        "summary": "Hands-on working sessions that turn managers and teams into capable AI operators.",
+        "price": "R15,000 – R35,000",
+        "duration": "Half-day",
+        "audience": "Managers and cross-functional teams",
+        "outcomes": [
+          "Live use-case identification",
+          "Prompt libraries and workflows built during the session",
+          "Action plan tailored to the team"
+        ]
+      },
+      "compliance": {
+        "name": "AI for Compliance & Risk",
+        "summary": "The governance-first programme for compliance, risk and legal teams navigating AI adoption.",
+        "price": "R20,000 – R50,000",
+        "duration": "Half to full day",
+        "focus": "AI risk, governance and POPIA",
+        "outcomes": [
+          "Practical AI risk taxonomy",
+          "POPIA-aligned controls and review process",
+          "Board-ready position on responsible AI"
+        ]
+      },
+      "corporate": {
+        "name": "Corporate Training Programme",
+        "summary": "A structured, multi-session journey that embeds AI capability across your organisation.",
+        "price": "R60,000 – R150,000",
+        "duration": "4 – 6 weeks",
+        "includes": "Modules, materials and ongoing support",
+        "outcomes": [
+          "Role-based curriculum across leadership, managers and operators",
+          "Artefacts, templates and prompt playbooks",
+          "Post-programme support and reinforcement"
+        ]
+      }
+    }
+  },
+  "about": {
+    "pageTitle": "About Continuum",
+    "pageSubtitle": "A South African AI training and advisory partner, built for the organisations shaping the country's next decade.",
+    "story": {
+      "title": "Why Continuum",
+      "body": [
+        "AI adoption is moving faster than most organisations can absorb it. Boards are asking for strategy. Teams are experimenting without guardrails. Compliance functions are being asked questions they've never been trained to answer.",
+        "Continuum exists to close that gap — practically. We deliver training that lands, advisory that ships, and a local perspective that understands the South African regulatory and business context before we say a word about global best practice.",
+        "We start local. We think global. Every framework we teach is designed to travel."
+      ]
+    },
+    "approach": {
+      "title": "Our approach",
+      "items": [
+        {
+          "title": "Practitioners, not lecturers",
+          "body": "Every session is led by people who actually build and deploy AI — you get lived experience, not a deck of definitions."
+        },
+        {
+          "title": "Context before content",
+          "body": "We diagnose your sector, your risk posture and your team's maturity before a single slide is built."
+        },
+        {
+          "title": "Artefacts over abstractions",
+          "body": "You leave every engagement with things you can use: prompts, playbooks, checklists, policies."
+        }
+      ]
+    },
+    "team": {
+      "title": "A specialist team",
+      "subtitle": "Training delivery, technical depth and content design — under one roof.",
+      "roles": [
+        {
+          "role": "Training Delivery & Client Engagement",
+          "body": "Leads client relationships and workshop delivery, ensuring every session translates into measurable outcomes."
+        },
+        {
+          "role": "Technical Input & Demonstrations",
+          "body": "Brings hands-on AI engineering experience into the room — live demonstrations, not hypotheticals."
+        },
+        {
+          "role": "Content Development & Research",
+          "body": "Builds and maintains our curriculum, tracking the AI landscape so our material is always current."
+        }
+      ]
+    }
+  },
+  "insights": {
+    "pageTitle": "Insights",
+    "pageSubtitle": "Perspectives on practical AI adoption, responsible deployment and what's actually working inside South African organisations.",
+    "empty": {
+      "title": "Fresh perspectives, coming soon.",
+      "body": "We publish short, high-signal pieces on LinkedIn each week. A longer-form archive will live here.",
+      "cta": "Follow us on LinkedIn"
+    }
+  },
+  "contact": {
+    "pageTitle": "Let's talk",
+    "pageSubtitle": "Tell us about your team, your timeline and what \"good\" looks like. We'll come back within one business day.",
+    "form": {
+      "name": "Full name",
+      "email": "Work email",
+      "company": "Company",
+      "service": "Service of interest",
+      "servicePlaceholder": "Select a service",
+      "message": "How can we help?",
+      "submit": "Send enquiry",
+      "sending": "Sending…",
+      "successTitle": "Thanks — we've got it.",
+      "successBody": "A member of the Continuum team will be in touch shortly.",
+      "errorTitle": "Something went wrong.",
+      "errorBody": "Please try again, or email us directly at hello@continuum.co.za."
+    },
+    "details": {
+      "title": "Other ways to reach us",
+      "emailLabel": "Email",
+      "email": "hello@continuum.co.za",
+      "locationLabel": "Based in",
+      "location": "Johannesburg, South Africa",
+      "hoursLabel": "Response time",
+      "hours": "Within one business day"
+    }
+  },
+  "footer": {
+    "description": "Practical AI training and advisory for South African organisations building toward a global future.",
+    "navTitle": "Explore",
+    "legalTitle": "Legal",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "copyright": "© {year} Continuum. All rights reserved.",
+    "builtIn": "Proudly built in South Africa."
+  }
+}

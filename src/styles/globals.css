@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+
+  --color-bg: var(--bg);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-brand-from: var(--brand-from);
+  --color-brand-to: var(--brand-to);
+}
+
+:root {
+  --brand-from: #6FE7D2;
+  --brand-to: #2BB6A8;
+  --accent: #3ED6C2;
+  --accent-strong: #2BB6A8;
+
+  /* Light mode (default) */
+  --bg: #FFFFFF;
+  --bg-elevated: #F5F7F9;
+  --fg: #05070A;
+  --fg-muted: #4A5560;
+  --border: rgba(5, 7, 10, 0.08);
+}
+
+.dark {
+  --bg: #05070A;
+  --bg-elevated: #0B0F14;
+  --fg: #EAEFF2;
+  --fg-muted: #8A95A3;
+  --border: rgba(234, 239, 242, 0.08);
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+    scroll-behavior: smooth;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: var(--accent);
+    color: #05070A;
+  }
+}
+
+@utility brand-gradient {
+  background-image: linear-gradient(135deg, var(--brand-from) 0%, var(--brand-to) 100%);
+}
+
+@utility brand-text {
+  background-image: linear-gradient(135deg, var(--brand-from) 0%, var(--brand-to) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+@utility ring-brand {
+  --tw-ring-color: var(--accent);
+}
