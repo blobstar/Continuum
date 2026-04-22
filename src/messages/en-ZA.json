@@ -7,7 +7,7 @@
     "home": "Home",
     "services": "Services",
     "about": "About",
-    "insights": "Insights",
+    "pricing": "Pricing",
     "contact": "Contact",
     "cta": "Book a session",
     "toggleTheme": "Toggle theme",
@@ -173,13 +173,39 @@
       ]
     }
   },
-  "insights": {
-    "pageTitle": "Insights",
-    "pageSubtitle": "Perspectives on practical AI adoption, responsible deployment and what's actually working inside South African organisations.",
-    "empty": {
-      "title": "Fresh perspectives, coming soon.",
-      "body": "We publish short, high-signal pieces on LinkedIn each week. A longer-form archive will live here.",
-      "cta": "Follow us on LinkedIn"
+  "pricing": {
+    "pageTitle": "Pricing",
+    "pageSubtitle": "Transparent ranges for our most common engagements. For an exact quote, tell us your audience size, format and timeline.",
+    "cards": {
+      "training": {
+        "title": "Training sessions",
+        "price": "From R8,000",
+        "body": "Briefings and workshops tailored to your team maturity, with practical artefacts you can use immediately."
+      },
+      "programmes": {
+        "title": "Programmes",
+        "price": "From R60,000",
+        "body": "Multi-session enablement designed to embed AI capability across leadership, managers and operators."
+      },
+      "advisory": {
+        "title": "Advisory",
+        "price": "Quoted",
+        "body": "Strategic and governance support for responsible AI adoption, aligned to your risk posture and POPIA context."
+      }
+    },
+    "notes": {
+      "title": "What affects pricing",
+      "items": [
+        "Audience size and seniority",
+        "Virtual vs in-person delivery",
+        "Customisation and use-case research",
+        "Follow-up support and reinforcement"
+      ]
+    },
+    "cta": {
+      "title": "Want an exact quote?",
+      "body": "Share your team size and what you're trying to achieve — we'll recommend a starting point within one business day.",
+      "button": "Request pricing"
     }
   },
   "contact": {

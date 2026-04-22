@@ -4,12 +4,12 @@ import { useEffect, useRef } from "react";
 import { useTheme } from "next-themes";
 
 /**
- * ParticleHero — synthwave-style animated backdrop.
+ * ParticleHero — brand dot-wave animated backdrop.
  *
  * Draws:
- *   - a perspective grid receding to a horizon, drifting toward the viewer
- *   - a field of glowing particles above the grid with additive blending,
- *     subtle parallax and horizon-wrapping
+ *   - a field of glowing dots arranged in a warped grid, shaped into a
+ *     moving “wave” (like the palette reference)
+ *   - a right-side emphasis with a soft fade-out to the left
  *
  * Behaviour:
  *   - Scales with devicePixelRatio and resizes on window resize
@@ -35,38 +35,25 @@ export function ParticleHero() {
       running: true,
       visible: true,
       t: 0,
-      pointer: { x: 0, y: 0, active: false },
       isDark: resolvedTheme !== "light",
     };
 
-    // --- Particle & grid configuration -----------------------------------
-    type Particle = {
-      x: number;
-      y: number;
-      z: number; // depth 0..1 (0 = far)
-      r: number; // radius
-      speed: number;
-      hue: number; // 0 = brand-from tone, 1 = brand-to tone
-      twinkle: number;
-    };
+    // --- Dot field configuration -----------------------------------------
+    type Dot = { u: number; v: number; seed: number };
+    const dots: Dot[] = [];
+    const DOT_COLS = 64;
+    const DOT_ROWS = 28;
 
-    const PARTICLE_COUNT = 180;
-    const particles: Particle[] = [];
+    const reseedDots = () => {
+      dots.length = 0;
 
-    const rand = (a: number, b: number) => a + Math.random() * (b - a);
-
-    const seedParticles = () => {
-      particles.length = 0;
-      for (let i = 0; i < PARTICLE_COUNT; i++) {
-        particles.push({
-          x: Math.random(),
-          y: Math.random(),
-          z: Math.random(),
-          r: rand(0.4, 1.8),
-          speed: rand(0.015, 0.06),
-          hue: Math.random(),
-          twinkle: rand(0, Math.PI * 2),
-        });
+      // A normalized grid (u: 0..1 left->right, v: 0..1 top->bottom)
+      for (let y = 0; y < DOT_ROWS; y++) {
+        for (let x = 0; x < DOT_COLS; x++) {
+          const u = x / (DOT_COLS - 1);
+          const v = y / (DOT_ROWS - 1);
+          dots.push({ u, v, seed: hash01(x * 97.3 + y * 13.7) });
+        }
       }
     };
 
@@ -82,17 +69,13 @@ export function ParticleHero() {
 
     // --- Palette helpers -------------------------------------------------
     const palette = () => {
-      // Brand from #6FE7D2 → to #2BB6A8, with theme-aware opacity ceilings.
       const dark = state.isDark;
       return {
-        bgGradientFrom: dark ? "rgba(5, 7, 10, 0)" : "rgba(255, 255, 255, 0)",
-        bgGradientTo: dark ? "rgba(5, 7, 10, 1)" : "rgba(255, 255, 255, 1)",
-        grid: dark ? "rgba(62, 214, 194, 0.42)" : "rgba(43, 182, 168, 0.28)",
-        gridFar: dark ? "rgba(62, 214, 194, 0.05)" : "rgba(43, 182, 168, 0.04)",
-        horizonGlow: dark ? "rgba(111, 231, 210, 0.25)" : "rgba(111, 231, 210, 0.18)",
-        particleCoreFrom: "rgba(111, 231, 210, 1)",
-        particleCoreTo: "rgba(43, 182, 168, 1)",
-        particleGlowAlpha: dark ? 0.85 : 0.55,
+        bg: dark ? "rgb(5, 7, 10)" : "rgb(255, 255, 255)",
+        glowA: [111, 231, 210] as [number, number, number], // #6FE7D2
+        glowB: [43, 182, 168] as [number, number, number], // #2BB6A8
+        dotAlpha: dark ? 0.85 : 0.48,
+        dotSoftAlpha: dark ? 0.22 : 0.14,
       };
     };
 
@@ -101,146 +84,87 @@ export function ParticleHero() {
       const p = palette();
       const { width, height } = state;
 
-      // Clear
       ctx.clearRect(0, 0, width, height);
 
-      // Soft radial vignette toward horizon for depth.
-      const horizonY = height * 0.58;
+      // Slight vignette biased toward the right (where the wave lives).
       const radial = ctx.createRadialGradient(
-        width / 2,
-        horizonY,
+        width * 0.72,
+        height * 0.48,
         Math.min(width, height) * 0.05,
-        width / 2,
-        horizonY,
-        Math.max(width, height) * 0.85
+        width * 0.72,
+        height * 0.48,
+        Math.max(width, height) * 0.95
       );
-      radial.addColorStop(0, p.horizonGlow);
-      radial.addColorStop(1, p.bgGradientFrom);
+      radial.addColorStop(0, `rgba(${p.glowA[0]}, ${p.glowA[1]}, ${p.glowA[2]}, ${state.isDark ? 0.18 : 0.12})`);
+      radial.addColorStop(1, "rgba(0,0,0,0)");
       ctx.fillStyle = radial;
       ctx.fillRect(0, 0, width, height);
     };
 
-    const drawGrid = () => {
+    const drawDotWave = () => {
       const p = palette();
       const { width, height, t } = state;
+      const ms = motionScale();
 
-      const horizonY = height * 0.58;
-      const vanishX = width / 2;
-      const gridDepthRows = 20;
-      const gridCols = 26;
-      const rowSpacing = (height - horizonY) / gridDepthRows;
+      // Wave sits on the right half, roughly centered vertically.
+      const centerX = width * 0.70;
+      const centerY = height * 0.52;
+      const waveWidth = width * 0.62;
+      const waveHeight = height * 0.46;
 
-      ctx.save();
-      ctx.lineCap = "round";
-      ctx.lineJoin = "round";
-
-      // Animated forward-drift: shift pattern toward viewer over time.
-      const drift = (t * 0.06) % 1;
-
-      // Horizontal scan lines (receding toward horizon)
-      for (let i = 0; i <= gridDepthRows; i++) {
-        const progress = (i + drift) / gridDepthRows;
-        if (progress <= 0 || progress >= 1) continue;
-
-        // Perspective: rows near viewer are farther apart than rows near horizon.
-        const eased = Math.pow(progress, 2.2);
-        const y = horizonY + eased * (height - horizonY);
-
-        const alpha = Math.min(1, Math.max(0, progress));
-        ctx.strokeStyle = mixStroke(p.gridFar, p.grid, alpha);
-        ctx.lineWidth = 1 + alpha * 0.6;
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(width, y);
-        ctx.stroke();
-      }
-
-      // Vertical perspective lines
-      for (let i = -gridCols; i <= gridCols; i++) {
-        const xBase = vanishX + ((i + drift * 2) / gridCols) * (width * 0.9);
-        ctx.strokeStyle = p.grid;
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(vanishX, horizonY);
-        ctx.lineTo(xBase, height);
-        ctx.stroke();
-      }
-
-      // Horizon line (bright)
-      const horizonGrad = ctx.createLinearGradient(0, 0, width, 0);
-      horizonGrad.addColorStop(0, "rgba(111, 231, 210, 0)");
-      horizonGrad.addColorStop(0.5, state.isDark ? "rgba(111, 231, 210, 0.9)" : "rgba(43, 182, 168, 0.7)");
-      horizonGrad.addColorStop(1, "rgba(111, 231, 210, 0)");
-      ctx.strokeStyle = horizonGrad;
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.moveTo(0, horizonY);
-      ctx.lineTo(width, horizonY);
-      ctx.stroke();
-
-      // Horizon glow (soft bloom above)
-      const bloom = ctx.createLinearGradient(0, horizonY - 80, 0, horizonY);
-      bloom.addColorStop(0, "rgba(111, 231, 210, 0)");
-      bloom.addColorStop(1, state.isDark ? "rgba(111, 231, 210, 0.22)" : "rgba(43, 182, 168, 0.15)");
-      ctx.fillStyle = bloom;
-      ctx.fillRect(0, horizonY - 80, width, 80);
-
-      ctx.restore();
-    };
-
-    const drawParticles = () => {
-      const p = palette();
-      const { width, height, t, pointer } = state;
-      const horizonY = height * 0.58;
+      // Left-to-right fade (strong on the right).
+      const fade = (u: number) => smoothstep(0.18, 0.92, u);
 
       ctx.save();
       ctx.globalCompositeOperation = "lighter";
 
-      for (const particle of particles) {
-        particle.z += particle.speed * 0.01;
-        if (particle.z > 1) particle.z -= 1;
+      for (const dot of dots) {
+        // Map normalized grid to a “billboard” rect on the right.
+        const localX = (dot.u - 0.5) * waveWidth;
+        const localY = (dot.v - 0.5) * waveHeight;
 
-        // Parallax: particles at higher z shift more with pointer.
-        const px = pointer.active ? (pointer.x - 0.5) * 40 * particle.z : 0;
-        const py = pointer.active ? (pointer.y - 0.5) * 20 * particle.z : 0;
+        // Depth gradient makes bottom rows larger / brighter.
+        const depth = smoothstep(0.0, 1.0, dot.v);
 
-        const x = particle.x * width + px;
-        // Particles float in upper band (sky), gently bobbing.
-        const baseY = particle.y * horizonY;
-        const y = baseY + Math.sin(t * 0.6 + particle.twinkle) * 1.4 + py;
+        // Noise-driven warp to form a drifting dot-wave surface.
+        const n1 = noise2(dot.u * 2.2 + t * 0.08 * ms, dot.v * 2.8 - t * 0.06 * ms);
+        const n2 = noise2(dot.u * 5.2 - t * 0.11 * ms, dot.v * 3.6 + t * 0.07 * ms);
+        const warpX = (n1 - 0.5) * (12 + 36 * depth);
+        const warpY = (n2 - 0.5) * (10 + 44 * depth);
 
-        const twinkle = 0.65 + Math.sin(t * 1.5 + particle.twinkle) * 0.35;
-        const radius = particle.r * (0.8 + particle.z * 0.8);
-        const glowRadius = radius * 6;
+        // A primary wave ridge (more pronounced in the middle rows).
+        const ridge =
+          Math.sin(dot.u * Math.PI * 2 + t * 0.9 * ms) * (10 + 24 * depth) +
+          Math.sin(dot.u * Math.PI * 4 - t * 0.55 * ms) * (4 + 12 * (1 - depth));
 
-        const glow = ctx.createRadialGradient(x, y, 0, x, y, glowRadius);
-        const colorMix = lerpColor(
-          [111, 231, 210],
-          [43, 182, 168],
-          particle.hue
-        );
-        glow.addColorStop(
-          0,
-          `rgba(${colorMix[0]}, ${colorMix[1]}, ${colorMix[2]}, ${
-            p.particleGlowAlpha * twinkle
-          })`
-        );
-        glow.addColorStop(
-          0.4,
-          `rgba(${colorMix[0]}, ${colorMix[1]}, ${colorMix[2]}, ${
-            p.particleGlowAlpha * 0.25 * twinkle
-          })`
-        );
-        glow.addColorStop(1, "rgba(43, 182, 168, 0)");
-        ctx.fillStyle = glow;
+        const x = centerX + localX + warpX;
+        const y = centerY + localY + warpY + ridge * (0.22 + 0.78 * (1 - Math.abs(dot.v - 0.52)));
+
+        // Dot size and opacity.
+        const baseR = 0.85 + depth * 1.65;
+        const tw = 0.75 + Math.sin(t * 1.6 * ms + dot.seed * Math.PI * 2) * 0.25;
+        const uFade = fade(dot.u);
+
+        const hueT = clamp01(dot.u * 0.85 + (n1 - 0.5) * 0.25);
+        const rgb = lerpColor(p.glowA, p.glowB, hueT);
+
+        const alpha = p.dotAlpha * uFade * (0.32 + 0.68 * depth) * tw;
+        const softAlpha = p.dotSoftAlpha * uFade * (0.25 + 0.75 * depth) * tw;
+
+        // Soft glow
+        const glowR = baseR * (5.0 + 2.5 * depth);
+        const g = ctx.createRadialGradient(x, y, 0, x, y, glowR);
+        g.addColorStop(0, `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${softAlpha})`);
+        g.addColorStop(1, "rgba(43, 182, 168, 0)");
+        ctx.fillStyle = g;
         ctx.beginPath();
-        ctx.arc(x, y, glowRadius, 0, Math.PI * 2);
+        ctx.arc(x, y, glowR, 0, Math.PI * 2);
         ctx.fill();
 
-        // Core
-        ctx.fillStyle = `rgba(${colorMix[0]}, ${colorMix[1]}, ${colorMix[2]}, ${twinkle})`;
+        // Core dot
+        ctx.fillStyle = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${alpha})`;
         ctx.beginPath();
-        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.arc(x, y, baseR, 0, Math.PI * 2);
         ctx.fill();
       }
 
@@ -249,8 +173,7 @@ export function ParticleHero() {
 
     const render = () => {
       drawBackdrop();
-      drawGrid();
-      drawParticles();
+      drawDotWave();
     };
 
     // --- Loop ------------------------------------------------------------
@@ -280,15 +203,11 @@ export function ParticleHero() {
 
     // --- Visibility & motion preferences ---------------------------------
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const motionScale = () => (reduceMotion.matches ? 0.22 : 1);
     const onReduceMotionChange = () => {
-      if (reduceMotion.matches) {
-        state.running = false;
-        stop();
-        render();
-      } else {
-        state.running = true;
-        start();
-      }
+      // Keep animating even with reduced-motion enabled, but at a gentler pace.
+      state.running = true;
+      start();
     };
     reduceMotion.addEventListener?.("change", onReduceMotionChange);
 
@@ -313,18 +232,6 @@ export function ParticleHero() {
     );
     io.observe(canvas);
 
-    const onPointerMove = (e: PointerEvent) => {
-      const rect = canvas.getBoundingClientRect();
-      state.pointer.x = (e.clientX - rect.left) / rect.width;
-      state.pointer.y = (e.clientY - rect.top) / rect.height;
-      state.pointer.active = true;
-    };
-    const onPointerLeave = () => {
-      state.pointer.active = false;
-    };
-    canvas.addEventListener("pointermove", onPointerMove);
-    canvas.addEventListener("pointerleave", onPointerLeave);
-
     const onResize = () => {
       resize();
     };
@@ -332,14 +239,10 @@ export function ParticleHero() {
 
     // --- Kick off --------------------------------------------------------
     resize();
-    seedParticles();
+    reseedDots();
 
-    if (reduceMotion.matches) {
-      state.running = false;
-      render();
-    } else {
-      start();
-    }
+    state.running = true;
+    start();
 
     return () => {
       stop();
@@ -347,8 +250,6 @@ export function ParticleHero() {
       window.removeEventListener("resize", onResize);
       document.removeEventListener("visibilitychange", onVisibility);
       reduceMotion.removeEventListener?.("change", onReduceMotionChange);
-      canvas.removeEventListener("pointermove", onPointerMove);
-      canvas.removeEventListener("pointerleave", onPointerLeave);
     };
   }, [resolvedTheme]);
 
@@ -373,27 +274,35 @@ function lerpColor(
   ];
 }
 
-/**
- * Returns an rgba string mixing two CSS rgba strings by alpha only.
- * Used to ease grid line visibility as rows approach the viewer.
- */
-function mixStroke(from: string, to: string, t: number): string {
-  const parse = (s: string) => {
-    const m = s.match(/rgba?\(([^)]+)\)/);
-    if (!m) return [0, 0, 0, 1] as [number, number, number, number];
-    const parts = m[1].split(",").map((p) => parseFloat(p.trim()));
-    return [parts[0] ?? 0, parts[1] ?? 0, parts[2] ?? 0, parts[3] ?? 1] as [
-      number,
-      number,
-      number,
-      number,
-    ];
-  };
-  const [fr, fg, fb, fa] = parse(from);
-  const [tr, tg, tb, ta] = parse(to);
-  const r = Math.round(fr + (tr - fr) * t);
-  const g = Math.round(fg + (tg - fg) * t);
-  const b = Math.round(fb + (tb - fb) * t);
-  const a = fa + (ta - fa) * t;
-  return `rgba(${r}, ${g}, ${b}, ${a})`;
+function clamp01(v: number) {
+  return Math.max(0, Math.min(1, v));
+}
+
+function smoothstep(edge0: number, edge1: number, x: number) {
+  const t = clamp01((x - edge0) / (edge1 - edge0));
+  return t * t * (3 - 2 * t);
+}
+
+function hash01(n: number) {
+  const s = Math.sin(n) * 43758.5453123;
+  return s - Math.floor(s);
+}
+
+// Value-noise: cheap, dependency-free, good enough for dot warping.
+function noise2(x: number, y: number) {
+  const xi = Math.floor(x);
+  const yi = Math.floor(y);
+  const xf = x - xi;
+  const yf = y - yi;
+
+  const a = hash01(xi * 157.0 + yi * 113.0);
+  const b = hash01((xi + 1) * 157.0 + yi * 113.0);
+  const c = hash01(xi * 157.0 + (yi + 1) * 113.0);
+  const d = hash01((xi + 1) * 157.0 + (yi + 1) * 113.0);
+
+  const u = xf * xf * (3 - 2 * xf);
+  const v = yf * yf * (3 - 2 * yf);
+
+  const lerp = (p: number, q: number, t: number) => p + (q - p) * t;
+  return lerp(lerp(a, b, u), lerp(c, d, u), v);
 }
